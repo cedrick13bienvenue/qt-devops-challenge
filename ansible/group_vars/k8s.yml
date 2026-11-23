@@ -1,0 +1,16 @@
+k8s_minor_version: "1.36"
+k8s_version: "v1.36.6"
+k8s_package_version: "1.36.6-1.1"
+k8s_packages:
+  - kubelet
+  - kubeadm
+  - kubectl
+
+k8s_pod_network_cidr: 10.244.0.0/16
+k8s_apiserver_address: "{{ hostvars[groups['control_plane'][0]].ansible_host }}"
+
+flannel_version: v0.28.11
+flannel_manifest_url: "https://github.com/flannel-io/flannel/releases/download/{{ flannel_version }}/kube-flannel.yml"
+
+k8s_admin_kubeconfig: /etc/kubernetes/admin.conf
+k8s_local_kubeconfig: "{{ lookup('env', 'HOME') }}/.kube/qt-exam.conf"
