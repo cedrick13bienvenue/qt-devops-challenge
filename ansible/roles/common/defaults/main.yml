@@ -1,0 +1,12 @@
+common_root_vg: ubuntu-vg
+common_root_lv: ubuntu-lv
+common_min_free_mb: 100
+
+common_packages:
+  - curl
+  - ca-certificates
+  - gnupg
+  - htop
+  - sysstat
+  - net-tools
+  - jq
