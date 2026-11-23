@@ -1,0 +1,2 @@
+proxmox_api_token_secret = "paste-the-token-secret-here"
+vm_password              = "choose-a-strong-password"
