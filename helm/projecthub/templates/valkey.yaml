@@ -1,0 +1,62 @@
+{{- $c := dict "root" . "component" "valkey" -}}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valkey
+  labels:
+    {{- include "projecthub.componentLabels" $c | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "projecthub.selectorLabels" $c | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "projecthub.componentLabels" $c | nindent 8 }}
+      annotations:
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+    spec:
+      containers:
+        - name: valkey
+          image: {{ .Values.valkey.image }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - sh
+            - -c
+            - exec valkey-server --requirepass "$VALKEY_PASSWORD" --save '' --appendonly no --maxmemory {{ .Values.valkey.maxMemory }} --maxmemory-policy allkeys-lru
+          env:
+            - name: VALKEY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: projecthub-secret
+                  key: VALKEY_PASSWORD
+          ports:
+            - name: valkey
+              containerPort: 6379
+          resources:
+            {{- toYaml .Values.valkey.resources | nindent 12 }}
+          readinessProbe:
+            exec:
+              command: ["sh", "-c", "valkey-cli -a \"$VALKEY_PASSWORD\" --no-auth-warning ping | grep -q PONG"]
+            initialDelaySeconds: 3
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 10
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: valkey
+  labels:
+    {{- include "projecthub.componentLabels" $c | nindent 4 }}
+spec:
+  selector:
+    {{- include "projecthub.selectorLabels" $c | nindent 4 }}
+  ports:
+    - name: valkey
+      port: 6379
+      targetPort: 6379
