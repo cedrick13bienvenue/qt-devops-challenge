@@ -1,0 +1,8 @@
+*
+!app/backend/
+!app/frontend/
+!docker/frontend.nginx.conf
+**/node_modules
+**/dist
+**/.env
+**/.env.*
