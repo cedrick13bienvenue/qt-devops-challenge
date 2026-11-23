@@ -1,0 +1,7 @@
+ProjectHub {{ .Chart.AppVersion }} is installed in namespace {{ .Release.Namespace }}.
+
+Through NGINX (NodePort):  http://<any-node-ip>:{{ .Values.nginx.nodePort }}
+Health check:              curl http://<any-node-ip>:{{ .Values.nginx.nodePort }}/api/health
+
+Watch the pods:
+  kubectl get pods -n {{ .Release.Namespace }} -o wide
