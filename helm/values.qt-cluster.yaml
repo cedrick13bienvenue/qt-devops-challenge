@@ -1,0 +1,4 @@
+gateway:
+  enabled: true
+  className: nginx
+  listenerPort: 80
