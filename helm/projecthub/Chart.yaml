@@ -1,0 +1,8 @@
+apiVersion: v2
+name: projecthub
+description: ProjectHub (React + Go API + MongoDB + Valkey) behind NGINX, with optional Gateway API routing
+type: application
+version: 0.1.0
+appVersion: "1.0.0"
+maintainers:
+  - name: Cedric Bienvenue
