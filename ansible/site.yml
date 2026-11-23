@@ -1,0 +1,5 @@
+- name: Baseline for every VM
+  hosts: all
+  become: true
+  roles:
+    - common
