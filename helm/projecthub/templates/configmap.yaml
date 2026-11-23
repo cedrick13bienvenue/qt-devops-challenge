@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: projecthub-config
+  labels:
+    {{- include "projecthub.labels" . | nindent 4 }}
+data:
+  GIN_MODE: {{ .Values.config.ginMode | quote }}
+  PORT: "8080"
+  MONGO_DB: {{ .Values.config.mongoDb | quote }}
+  MONGO_CONNECT_TIMEOUT: {{ .Values.config.mongoConnectTimeout | quote }}
+  CACHE_ENABLED: {{ .Values.config.cacheEnabled | quote }}
+  VALKEY_ADDR: "valkey:6379"
+  VALKEY_DB: "0"
+  CACHE_STATS_TTL: {{ .Values.config.cacheStatsTtl | quote }}
+  CACHE_USER_TTL: {{ .Values.config.cacheUserTtl | quote }}
+  SEED_ENABLED: {{ .Values.config.seedEnabled | quote }}
