@@ -35,14 +35,7 @@ Test accounts (created automatically on first start):
 | c3-k8s-worker-1 | Kubernetes worker | 4103 | 192.168.160.212 | 4 / 4 GB / 30 GB |
 | c3-k8s-worker-2 | Kubernetes worker | 4104 | 192.168.160.213 | 4 / 4 GB / 30 GB |
 
-- **Username:** `cedrick-bienvenue` on all four VMs, with passwordless `sudo`
-- **Password:** sent to the examiners by email; it is not committed to this repository. The same password works on
-  every VM, both on the Proxmox console and over SSH.
-- **SSH key:** the `qt_exam` ed25519 key is also authorised on every VM and is available on request.
-
-```bash
-ssh cedrick-bienvenue@192.168.160.210
-```
+VM login details were sent to the examiners by email.
 
 ### Docker Hub images
 
