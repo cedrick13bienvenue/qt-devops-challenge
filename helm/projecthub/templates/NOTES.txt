@@ -1,6 +1,10 @@
 ProjectHub {{ .Chart.AppVersion }} is installed in namespace {{ .Release.Namespace }}.
 
 Through NGINX (NodePort):  http://<any-node-ip>:{{ .Values.nginx.nodePort }}
+{{- if .Values.gateway.enabled }}
+Through the Gateway API:   Gateway projecthub-gateway (class {{ .Values.gateway.className }}), HTTPRoute projecthub
+                           kubectl get gateway,httproute -n {{ .Release.Namespace }}
+{{- end }}
 Health check:              curl http://<any-node-ip>:{{ .Values.nginx.nodePort }}/api/health
 
 Watch the pods:

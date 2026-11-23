@@ -66,6 +66,11 @@ mongodb:
       cpu: "1"
       memory: 1Gi
 
+gateway:
+  enabled: false
+  className: nginx
+  listenerPort: 80
+
 valkey:
   image: valkey/valkey:8-alpine
   maxMemory: 128mb
