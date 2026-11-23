@@ -1,0 +1,12 @@
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        VITE_API_URL: /api
+
+  api:
+    build:
+      context: ..
+      dockerfile: docker/api.Dockerfile
