@@ -1,0 +1,7 @@
+- name: Join the cluster
+  ansible.builtin.command: >-
+    {{ hostvars[groups['control_plane'][0]].k8s_join_command.stdout }}
+    --node-name={{ inventory_hostname }}
+    --cri-socket=unix:///run/containerd/containerd.sock
+  args:
+    creates: /etc/kubernetes/kubelet.conf
