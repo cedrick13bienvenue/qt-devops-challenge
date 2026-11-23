@@ -1,0 +1,51 @@
+- name: Initialize the cluster with kubeadm
+  ansible.builtin.command: >-
+    kubeadm init
+    --kubernetes-version={{ k8s_version }}
+    --apiserver-advertise-address={{ k8s_apiserver_address }}
+    --pod-network-cidr={{ k8s_pod_network_cidr }}
+    --node-name={{ inventory_hostname }}
+    --cri-socket=unix:///run/containerd/containerd.sock
+  args:
+    creates: "{{ k8s_admin_kubeconfig }}"
+
+- name: Create .kube directory for the login user
+  ansible.builtin.file:
+    path: "/home/{{ ansible_user }}/.kube"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0700"
+
+- name: Give the login user a kubeconfig
+  ansible.builtin.copy:
+    src: "{{ k8s_admin_kubeconfig }}"
+    dest: "/home/{{ ansible_user }}/.kube/config"
+    remote_src: true
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0600"
+
+- name: Install the Flannel CNI
+  ansible.builtin.command: kubectl apply -f {{ flannel_manifest_url }}
+  environment:
+    KUBECONFIG: "{{ k8s_admin_kubeconfig }}"
+  register: k8s_flannel_apply
+  changed_when: "'created' in k8s_flannel_apply.stdout or 'configured' in k8s_flannel_apply.stdout"
+
+- name: Wait for the control-plane node to become Ready
+  ansible.builtin.command: kubectl wait --for=condition=Ready node/{{ inventory_hostname }} --timeout=300s
+  environment:
+    KUBECONFIG: "{{ k8s_admin_kubeconfig }}"
+  changed_when: false
+
+- name: Copy the kubeconfig to the Ansible control node
+  ansible.builtin.fetch:
+    src: "{{ k8s_admin_kubeconfig }}"
+    dest: "{{ k8s_local_kubeconfig }}"
+    flat: true
+
+- name: Create a join command for the workers
+  ansible.builtin.command: kubeadm token create --print-join-command
+  register: k8s_join_command
+  changed_when: false
