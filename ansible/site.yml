@@ -3,3 +3,30 @@
   become: true
   roles:
     - common
+
+- name: Prepare Kubernetes nodes
+  hosts: k8s
+  become: true
+  roles:
+    - k8s_node
+
+- name: Initialize the control plane
+  hosts: control_plane
+  become: true
+  roles:
+    - k8s_control_plane
+
+- name: Join the workers
+  hosts: workers
+  become: true
+  roles:
+    - k8s_worker
+
+- name: Verify the cluster
+  hosts: control_plane
+  become: true
+  tasks:
+    - name: Label workers and wait for all nodes
+      ansible.builtin.include_role:
+        name: k8s_control_plane
+        tasks_from: verify

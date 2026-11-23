@@ -1,0 +1,24 @@
+- name: Label worker nodes
+  ansible.builtin.command: kubectl label node {{ item }} node-role.kubernetes.io/worker= --overwrite
+  environment:
+    KUBECONFIG: "{{ k8s_admin_kubeconfig }}"
+  loop: "{{ groups['workers'] }}"
+  register: k8s_label
+  changed_when: "'not labeled' not in k8s_label.stdout"
+
+- name: Wait for every node to become Ready
+  ansible.builtin.command: kubectl wait --for=condition=Ready nodes --all --timeout=300s
+  environment:
+    KUBECONFIG: "{{ k8s_admin_kubeconfig }}"
+  changed_when: false
+
+- name: Read cluster nodes
+  ansible.builtin.command: kubectl get nodes -o wide
+  environment:
+    KUBECONFIG: "{{ k8s_admin_kubeconfig }}"
+  register: k8s_nodes
+  changed_when: false
+
+- name: Show cluster nodes
+  ansible.builtin.debug:
+    msg: "{{ k8s_nodes.stdout_lines }}"
